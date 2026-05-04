@@ -1,0 +1,30 @@
+# @package _global_
+
+xpname: unet
+
+model:
+  opt_fn:
+    _target_: src.utils.cosanneal_lr_adam
+  solver:
+    _target_: src.unet.UNet
+    dim_in: 15
+    dropout: 0.1
+    channel_dims:
+    - 256
+    - 256
+    - 256
+    - 256
+    - 256
+    - 256
+    - 256
+    - 256
+    - 256
+    - 512
+    bias: false
+    interp_mode: bilinear
+    activation_layer:
+      _target_: torch.nn.ReLU
+
+defaults:
+  - base
+  - _self_

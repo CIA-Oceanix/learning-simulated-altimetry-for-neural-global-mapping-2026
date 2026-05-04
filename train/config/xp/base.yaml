@@ -1,0 +1,99 @@
+# @package _global_
+
+domain:
+  lat: {_target_: builtins.slice, _args_: [-80, 90]}
+  lon: {_target_: builtins.slice, _args_: [-180, 180]}
+
+xpname: ???
+ckpt: null
+finetune: null
+
+patch_dims:
+  time: 15
+  lat: 256
+  lon: 256
+
+trainer:
+  _target_: pytorch_lightning.Trainer
+  inference_mode: false
+  deterministic: true
+  gradient_clip_val: 0.5
+  accelerator: gpu
+  devices: 1
+  logger:
+    _target_: pytorch_lightning.loggers.tensorboard.TensorBoardLogger
+    save_dir: ${hydra:runtime.output_dir}
+    name: ${hydra:runtime.choices.xp}
+    version: ''
+  max_epochs: 1000
+  limit_train_batches: 250
+  callbacks:
+    - _target_: pytorch_lightning.callbacks.LearningRateMonitor
+    - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+      monitor: val_mse
+      save_last: true
+      save_top_k: 3
+      filename: '{val_mse:.5f}-{epoch:03d}'
+  # log_every_n_steps: 1
+  check_val_every_n_epoch: 3
+
+datamodule:
+  _target_: ocean4dvarnet.data.NoisyLazyDataModule
+  input_da:
+    _target_: ocean4dvarnet.utils.load_sea_level_anomaly
+    tgt_path: ???
+    tgt_var: sla
+    inp_path: ???
+    inp_var: sla
+  domains:
+    train:
+      time: {_target_: builtins.slice, _args_: ['2010-01-01', '2017-11-01']}
+    val:
+      time: {_target_: builtins.slice, _args_: ['2017-12-01', '2018-12-01']}
+    test:
+      time: {_target_: builtins.slice, _args_: ['2019-01-01', '2019-12-31']}
+  xrds_kw:
+    train:
+      patch_dims: ${patch_dims}
+      strides: {time: 1, lat: 16, lon: 16}
+      domain_limits: ${domain}
+      edges: {lon: periodic, lat: fill_nan}
+    val:
+      patch_dims: ${patch_dims}
+      strides: {time: 1, lat: 256, lon: 256}
+      domain_limits: ${domain}
+      edges: {lon: periodic, lat: fill_nan}
+    test:
+      patch_dims: ${patch_dims}
+      strides: {time: 1, lat: 256, lon: 256}
+      domain_limits: ${domain}
+      edges: {lon: periodic, lat: fill_nan}
+  dl_kw: {batch_size: 16, num_workers: 4}
+  norm_stats:
+    train:
+    - -0.003646947876590528
+    - 0.08609351976959566
+    val:
+    - 0.010479948219678018
+    - 0.0839143957090029
+    test:
+    - 0.014961183488118947
+    - 0.08553513965319608
+  noise: 0.03
+
+model:
+  _target_: ocean4dvarnet.models.LitModel
+  persist_rw: false
+  opt_fn:
+    _target_: ocean4dvarnet.utils.cosanneal_lr_adam
+    _partial_: true
+    lr: 1e-4
+    T_max: ${trainer.max_epochs}
+  rec_weight:
+    _target_: ocean4dvarnet.utils.get_triang_time_wei
+    patch_dims: ${patch_dims}
+    crop: {time: 0, lat: 4, lon: 4}
+  norm_stats: ${datamodule.norm_stats}
+
+defaults:
+  - _self_

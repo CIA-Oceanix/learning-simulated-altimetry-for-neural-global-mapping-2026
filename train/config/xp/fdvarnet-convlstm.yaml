@@ -1,0 +1,26 @@
+# @package _global_
+
+xpname: fdvarnet
+
+model:
+  _target_: ocean4dvarnet.models.Lit4dVarNet
+  solver:
+    _target_: ocean4dvarnet.models.GradSolver
+    n_step: 5
+    lr_grad: 1e3
+    prior_cost:
+      _target_: ocean4dvarnet.models.BilinAEPriorCost
+      dim_in: ${patch_dims.time}
+      dim_hidden: 64
+      bilin_quad: false
+      downsamp: null
+    obs_cost:
+      _target_: ocean4dvarnet.models.BaseObsCost
+    grad_mod:
+      _target_: ocean4dvarnet.models.ConvLstmGradModel
+      dim_in: ${patch_dims.time}
+      dim_hidden: 96
+
+defaults:
+  - base
+  - _self_
