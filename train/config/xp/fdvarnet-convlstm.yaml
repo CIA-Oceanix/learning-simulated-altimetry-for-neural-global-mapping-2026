@@ -2,6 +2,9 @@
 
 xpname: fdvarnet
 
+trainer:
+  max_epochs: 2000
+
 model:
   _target_: ocean4dvarnet.models.Lit4dVarNet
   solver:
