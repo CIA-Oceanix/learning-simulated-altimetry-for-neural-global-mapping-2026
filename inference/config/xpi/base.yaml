@@ -1,0 +1,25 @@
+# @package _global_
+
+params:
+  domains:
+    time: ['2018-12-01', '2020-01-31']
+    lat: [-80, 82]
+    lon: [-186, 186]
+  patch_dims:
+    time: 15
+    lat: 648
+    lon: 1488
+  strides:
+    time: 1
+    lat: 200
+    lon: 200
+  batch_size: 1
+  num_workers: 1
+  ensemble: 10
+
+observation:
+  data:
+    _target_: inference.load_dataset
+    path: /SCRATCH/d22zhu/sla_filtered_0.25deg.nc
+    var: sla_filtered
+  noise: 0.2

@@ -1,0 +1,10 @@
+# @package _global_
+
+method:
+  name: <name of your method>
+  checkpoint: <path to the checkpoint>
+  config: <path to the .hydra/config.yaml>
+
+defaults:
+- base
+- _self_
