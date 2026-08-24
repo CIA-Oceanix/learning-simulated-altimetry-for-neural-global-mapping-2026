@@ -43,7 +43,6 @@ class LitModel(pl.LightningModule):
         self.save_dir.parent.mkdir(parents=True, exist_ok=True)
 
         self.out_dims = out_dims
-        self.bs = 0  # batch size
         self.crop_val = crop_val
         self.kwargs = kwargs
 
@@ -62,14 +61,14 @@ class LitModel(pl.LightningModule):
         else:
             outputs = self.solver(batch)
 
-        self.bs = self.bs or outputs.shape[0]
+        batch_size = outputs.shape[0]
 
         m, s = self.norm_stats
         outputs = outputs.cpu().numpy() * s + m
 
         num_devices = self.trainer.num_devices * self.trainer.num_nodes
         item_idxes = (
-            (batch_idx * self.bs + torch.arange(self.bs))
+            (batch_idx * batch_size + torch.arange(batch_size))
             * num_devices + self.global_rank
         )
 
@@ -196,7 +195,7 @@ def run(cfg):
     dataloader = torch.utils.data.DataLoader(
         datasets,
         batch_size=cfg.params.get('batch_size', 1),
-        num_workers=cfg.params.get('num_worker', 4),
+        num_workers=cfg.params.get('num_workers', 4),
     )
 
     resolution = (patcher.da.lat[1] - patcher.da.lat[0]).item()
