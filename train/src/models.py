@@ -1,6 +1,9 @@
 import functools as ft
+import kornia.filters as kfilts
 import numpy as np
 import ocean4dvarnet
+import omegaconf
+import torch
 import xarray as xr
 
 
@@ -163,6 +166,28 @@ class MaskingLazyXrDataset(ocean4dvarnet.data.LazyXrDataset):
                     "All provided xr.DataArray must share the same coordinates "
                     + f"({ref} != {k})"
                 )
+
+
+class ValfactorLitModel(ocean4dvarnet.models.LitModel):
+    def __init__(self, *args, **kwargs):
+        self.val_factor = kwargs.pop('val_factor', 10_000)
+        super().__init__(*args, **kwargs)
+
+    def training_loss(self, batch, out, phase):
+        loss = self.weighted_mse(out - batch.tgt, self.rec_weight)
+        grad_loss = self.weighted_mse(kfilts.sobel(out) - kfilts.sobel(batch.tgt), self.rec_weight)
+
+        if isinstance(self.norm_stats, omegaconf.dictconfig.DictConfig):
+            std = self.norm_stats[phase][1]
+        else:
+            std = self.norm_stats[1]
+
+        with torch.no_grad():
+            self.log(f"{phase}_mse", self.val_factor * loss * std**2, prog_bar=True, on_step=False, on_epoch=True)
+            self.log(f"{phase}_loss", loss, prog_bar=False, on_step=False, on_epoch=True)
+            self.log(f"{phase}_gloss", grad_loss, prog_bar=False, on_step=False, on_epoch=True)
+
+        return 50 * loss + 1000 * grad_loss
 
 
 def load_sea_level_anomaly_with_mask(
