@@ -1,0 +1,12 @@
+# @package _global_
+
+datamodule:
+  _target_: src.models.MaskingDataModule
+  input_da:
+    tgt_path: /SCRATCH/d22zhu/glorys12_2010_2019_daily_sla_4th_target_gridded_alongtrack.nc
+    inp_path: /SCRATCH/d22zhu/glorys12_2010_2019_daily_sla_4th_input_mask.nc
+    inp_var: inp
+
+defaults:
+  - unet
+  - _self_

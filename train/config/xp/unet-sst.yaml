@@ -1,0 +1,26 @@
+# @package _global_
+
+datamodule:
+  _target_: src.models.MaskingDataModule
+  input_da:
+    tgt_path: /SCRATCH/d22zhu/ssta_target.nc
+    tgt_var: sst_anomaly
+    # inp_path: /SCRATCH/d22zhu/glorys12_2010_2019_daily_sla_4th_input_mask.nc
+    inp_path: /SCRATCH/d22zhu/ssta_mask.nc
+    inp_var: mask
+  norm_stats:
+    train:
+    - 0.18434810138121066
+    - 0.7699346597289376
+    val:
+    - 0.22991551019243067
+    - 0.7615401327355711
+  # noise: 0.4
+
+model:
+  _target_: src.models.ValfactorLitModel
+  val_factor: 1
+
+defaults:
+  - unet
+  - _self_
