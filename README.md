@@ -1,4 +1,4 @@
-# End-to-end learning from simulated observations for the neural global-scale mapping of real altimetry data
+# [Source code] End-to-end learning from simulated observations for the neural global-scale mapping of real altimetry data, 2026
 
 This repository contains the training and inference source code used in the
 following paper:
