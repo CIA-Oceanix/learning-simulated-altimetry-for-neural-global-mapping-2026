@@ -1,5 +1,7 @@
 # [Source code] End-to-end learning from simulated observations for the neural global-scale mapping of real altimetry data, 2026
 
+[![DOI](https://zenodo.org/badge/1218003461.svg)](https://doi.org/10.5281/zenodo.22662638)
+
 This repository contains the training and inference source code used in the
 following paper:
 
