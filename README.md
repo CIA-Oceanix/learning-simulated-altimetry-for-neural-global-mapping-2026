@@ -99,7 +99,7 @@ inference.
     cd train
     python train.py xp=<model_you_used> finetune=<path_to_checkpoint>
     ```
-    The difference with the the resuming is that only weights will be loaded,
+    The difference with the resuming is that only weights will be loaded,
     other hyperparameters will not (current epoch, learning rate step, etc).
 
 ## Inference
@@ -165,8 +165,6 @@ inference.
 
     Just specify the paths to the checkpoints and the YAML config in your
     inference configurations.
-
-
 
 
 ## Figures
