@@ -14,7 +14,6 @@ import xrpatcher
 from omegaconf import OmegaConf
 
 sys.path.append('../train')
-sys.path.append('/Odyssey/private/d22zhu/Lab/4dvarnet-global-mapping')
 
 torch.set_float32_matmul_precision("high")
 PredictItem = namedtuple("PredictItem", ("input",))

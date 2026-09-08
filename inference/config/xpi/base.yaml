@@ -20,6 +20,6 @@ params:
 observation:
   data:
     _target_: inference.load_dataset
-    path: /SCRATCH/d22zhu/sla_filtered_0.25deg.nc
+    path: ???
     var: sla_filtered
   noise: 0.2
