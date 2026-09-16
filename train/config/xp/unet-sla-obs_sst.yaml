@@ -1,0 +1,13 @@
+# @package _global_
+
+xpname: unet-sla-obs_sst
+
+datamodule:
+  _target_: src.models.MaskingDataModule
+  input_da:
+    inp_path: /SCRATCH/d22zhu/ssta_mask.nc
+    inp_var: mask
+
+defaults:
+  - unet-sla
+  - _self_
