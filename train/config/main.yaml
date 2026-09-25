@@ -1,6 +1,6 @@
 hydra:
   run:
-    dir: outputs/${now:%Y-%m-%d}/${xpname}-${now:%H-%M-%S}
+    dir: /SCRATCH/d22zhu/outputs/${now:%Y-%m-%d}/${xpname}-${now:%H-%M-%S}
   callbacks:
     LogJobReturnCallback:
       _target_: hydra.experimental.callbacks.LogJobReturnCallback
@@ -9,5 +9,5 @@ entrypoints: ???
 xpname: ???
 
 defaults:
-  - xp: ???
   - _self_
+  - xp: ???
