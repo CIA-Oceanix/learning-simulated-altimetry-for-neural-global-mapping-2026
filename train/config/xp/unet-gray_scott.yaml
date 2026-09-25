@@ -1,0 +1,19 @@
+# @package _global_
+
+xpname: unet-gray_scott
+
+datamodule:
+  dataset: gray_scott_reaction_diffusion
+  path: /SCRATCH/d22zhu/datasets/gray_scott_reaction_diffusion/data
+  fields: [A, B]
+  # Native grid is 128x128: upsample to the 256x256 patch size.
+  resize: fourier
+  # 1001 time steps per trajectory: only take one window start out of 50 for
+  # validation and testing, to keep a validation set of a size comparable to
+  # the other experiments.
+  window_strides: {train: 1, val: 50, test: 50}
+  norm_time_stride: 100
+
+defaults:
+  - unet-active_matter
+  - _self_

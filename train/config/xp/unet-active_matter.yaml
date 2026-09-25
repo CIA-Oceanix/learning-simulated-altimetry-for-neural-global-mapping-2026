@@ -1,0 +1,32 @@
+# @package _global_
+
+xpname: unet-active_matter
+
+datamodule:
+  _target_: src.the_well.WellDataModule
+  # Clear the SLA-specific keys inherited from base.yaml (`input_da` has a
+  # `_target_` with mandatory `???` fields, which would otherwise be
+  # eagerly instantiated and fail before reaching WellDataModule).
+  input_da: null
+  domains: null
+  xrds_kw: null
+  norm_stats: null
+  dataset: active_matter
+  path: /SCRATCH/d22zhu/datasets/active_matter/data
+  # Scalar fields used as independent training samples (see
+  # src.the_well.FIELDS for the available ones).
+  fields: [velocity_x, velocity_y]
+  mask_path: /SCRATCH/d22zhu/glorys12_2010_2019_daily_sla_4th_input_mask.nc
+  mask_var: inp
+  patch_dims: ${patch_dims}
+  dl_kw: {batch_size: 16, num_workers: 4}
+  noise: 0.03
+
+model:
+  # WellDataModule computes its own norm_stats at setup() time, so LitModel
+  # is left to fetch it from the datamodule at runtime.
+  norm_stats: null
+
+defaults:
+  - unet
+  - _self_
